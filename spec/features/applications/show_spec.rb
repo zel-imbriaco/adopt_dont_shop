@@ -70,6 +70,28 @@ RSpec.describe "Application Show Page" do
     expect(page.text.index(@pet_2.name)).to be < page.text.index("Search")
   end
 
+  it 'Will search for a partial match on unsubmitted search field' do
+    visit "/applications/#{@application_2.id}"
+
+    expect(page).not_to have_content("Scrappy")
+
+    fill_in :find_pet, with: "Scr"
+    click_on "Search"
+
+    expect(page).to have_content("Scrappy")
+  end
+
+  it 'Will search for pets in a case-insensitive manner' do
+    visit "/applications/#{@application_2.id}"
+
+    expect(page).not_to have_content("Scrappy")
+
+    fill_in :find_pet, with: "sCrAPpY"
+    click_on "Search"
+
+    expect(page).to have_content("Scrappy")
+  end
+  
   it "Has a form for application description which, once filled, allows the user to 'submit' the application" do
     visit "/applications/#{@application_1.id}"
     fill_in :description, with: "I run a not-for profit animal rescue on my property, and we're looking for a foster mother dog for three orphaned squirrels. Of course we also don't want to have just one dog without a pack, so we decided that what we really need is two dogs! We think Scrappy and Daisy would make fantastic parents!"

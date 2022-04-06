@@ -7,8 +7,8 @@
 <p> Description: <%= @application.description %></p>
 <p> Pets on this application: </p>
 <ul>
-  <% @pets.each do |pet| %>
-  <li><a href="/pets/<%= pet.id %>/"> <%= pet.name %> </a></li>
+  <% @application.pets.each do |pet| %>
+    <li><a href="/pets/<%= pet.id %>/"> <%= pet.name %> </a></li>
   <% end %>
 </ul>
 
@@ -20,17 +20,19 @@
     <%= f.text_field :find_pet %>
     <%= f.submit "Search" %>
   <% end %>
-  <% @pet_search.each do |pet| %>
+  <% if params[:find_pet] != nil %>
+    <% Pet.search_by_name(params[:find_pet]).each do |pet| %>
     <div id="pet_search_result_<%= pet.id %>"><li><%= pet.name %></li> <%= button_to "Adopt This Pet", "/applications/#{@application.id}", method: "post", params: { pet_id: pet.id, application_id: @application.id } %></div>
+    <% end %>
   <% end %>
 <% end %>
 
-  <% if @pets.length > 0 %>
+<% if @application.pets.length > 0 %>
   <section name="application_submission_form">
     <%= form_with url: "/applications/#{@application.id}", method: :patch, local: true do |t| %>
       <%= t.label "Why I would make a good owner:" %>
       <%= t.text_area :description, value: params[:description] %>
       <%= t.submit :submit_this_application %>
     <% end %>
-    </section>
-  <% end %>
+  </section>
+<% end %>
